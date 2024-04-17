@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "order-mysql-db"
+  labels:
+    app.kubernetes.io/name: order-mysql-db
+spec:
+  selector: # mysql Pod Should contain same labels
+    matchLabels:
+      app: order-mysql-db
+      tier: database
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels: # Must match 'Service' and 'Deployment' selectors
+        app: order-mysql-db
+        tier: database
+    spec:
+      initContainers:
+        - name: init-mydb
+          image: busybox:1.28
+          command: ['sh', '-c', "echo \"USE seata; CREATE TABLE IF NOT EXISTS \\`undo_log\\`( \\`branch_id\\` BIGINT NOT NULL COMMENT 'branch transaction id', \\`xid\\` VARCHAR(128) NOT NULL COMMENT 'global transaction id',\\`context\\` VARCHAR(128) NOT NULL COMMENT 'undo_log context,such as serialization',\\`rollback_info\\` LONGBLOB NOT NULL COMMENT 'rollback info',\\`log_status\\` INT(11) NOT NULL COMMENT '0:normal status,1:defense status',\\`log_created\\` DATETIME(6) NOT NULL COMMENT 'create datetime',\\`log_modified\\` DATETIME(6) NOT NULL COMMENT 'modify datetime',UNIQUE KEY \\`ux_undo_log\\`(\\`xid\\`, \\`branch_id\\`)) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COMMENT='AT transaction mode undo table';ALTER TABLE \\`undo_log\\` ADD INDEX \\`ix_log_created\\` (\\`log_created\\`);DROP TABLE IF EXISTS \\`order_tbl\\`; CREATE TABLE \\`order_tbl\\`(\\`id\\` int(11) NOT NULL AUTO_INCREMENT,\\`user_id\\` varchar(255) DEFAULT NULL,\\`commodity_code\\` varchar(255) DEFAULT NULL,\\`count\\` int(11) DEFAULT 0,\\`money\\` int(11) DEFAULT 0,PRIMARY KEY (\\`id\\`)) ENGINE=InnoDB DEFAULT CHARSET=utf8;\" > /docker-entrypoint-initdb.d/initdb.sql"]
+          volumeMounts:
+            - name: workdir
+              mountPath: "/docker-entrypoint-initdb.d"
+      containers:
+        - image: container-registry.oracle.com/mysql/community-server:8.0 # image from oracle container-hub
+          args:
+            - "--character-set-server=utf8mb4"
+          name: order-mysql-db
+          ports:
+            - containerPort: 3306
+              name: mysql
+          env:
+            - name: MYSQL_DATABASE # Setting Database Name from a 'ConfigMap'
+              valueFrom :
+                configMapKeyRef :
+                  name : {{ .Release.Name }}-configmap
+                  key :  order-db-name
+            - name: MYSQL_ROOT_PASSWORD # Setting Database Password from a 'Secret'
+              valueFrom :
+                secretKeyRef :
+                  name : {{ .Release.Name }}-secrets
+                  key :  order-db-password
+            - name: MYSQL_ROOT_HOST # Setting visit user host
+              value: "%"
+          volumeMounts:
+            - name: workdir
+              mountPath: "/docker-entrypoint-initdb.d"
+      volumes:
+        - name: workdir
+          emptyDir: {}

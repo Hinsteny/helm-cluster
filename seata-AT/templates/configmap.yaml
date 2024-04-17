@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-configmap
+data:
+  account-db-name: {{ .Values.database.accountDBInfo.dbname }}
+  order-db-name: {{ .Values.database.orderDBInfo.dbname }}
+  stock-db-name: {{ .Values.database.stockDBInfo.dbname }}
