@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seata-order
+  labels:
+    app.kubernetes.io/name: seata-order
+spec:
+  selector: # mysql Pod Should contain same labels
+    matchLabels:
+      app: seata-order
+      tier: app
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels: 
+        app: seata-order
+        tier: app
+    spec:
+      containers:
+        - image: hinsteny.com/seata-test/seata-order:1.0.0 # image from local registry
+          name: seata-order
+          ports:
+            - name: tcp
+              containerPort: 20883
+              protocol: TCP

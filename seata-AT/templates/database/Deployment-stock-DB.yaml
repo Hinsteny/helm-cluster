@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "stock-mysql-db"
+  name: stock-mysql-db
   labels:
     app.kubernetes.io/name: stock-mysql-db
 spec:

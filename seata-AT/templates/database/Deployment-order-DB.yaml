@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "order-mysql-db"
+  name: order-mysql-db
   labels:
     app.kubernetes.io/name: order-mysql-db
 spec:

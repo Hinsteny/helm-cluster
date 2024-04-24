@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seata-business
+  labels:
+    app.kubernetes.io/name: seata-business
+spec:
+  selector: # mysql Pod Should contain same labels
+    matchLabels:
+      app: seata-business
+      tier: app
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels: 
+        app: seata-business
+        tier: app
+    spec:
+      containers:
+        - image: hinsteny.com/seata-test/seata-business:1.0.0 # image from local registry
+          name: seata-business
+          ports:
+            - name: http
+              containerPort: 9999
+              protocol: TCP
+            - name: tcp
+              containerPort: 20883
+              protocol: TCP

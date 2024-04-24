@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: seata-stock
+  labels:
+    app.kubernetes.io/name: seata-stock
+spec:
+  selector: # mysql Pod Should contain same labels
+    matchLabels:
+      app: seata-stock
+      tier: app
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels: 
+        app: seata-stock
+        tier: app
+    spec:
+      containers:
+        - image: hinsteny.com/seata-test/seata-stock:1.0.0 # image from local registry
+          name: seata-stock
+          ports:
+            - name: tcp
+              containerPort: 20883
+              protocol: TCP

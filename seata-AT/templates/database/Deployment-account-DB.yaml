@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "account-mysql-db"
+  name: account-mysql-db
   labels:
     app.kubernetes.io/name: account-mysql-db
 spec:

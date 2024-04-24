@@ -10,22 +10,25 @@ database:
   version: 8.0
   accountDBInfo:
     dbname: "seata"
-    password: "d2VsY29tZQ=="
   accountUserInfo:
     userName: "root"
-    password: "d2VsY29tZQ=="
+    password: "aGVsbG93b3JsZA=="
   orderDBInfo:
     dbname: "seata"
   orderUserInfo:
     userName: "root"
-    password: "d2VsY29tZQ=="
+    password: "aGVsbG93b3JsZA=="
   stockDBInfo:
     dbname: "seata"
   stockUserInfo:
     userName: "root"
-    password: "d2VsY29tZQ=="
+    password: "aGVsbG93b3JsZA=="
 
 image:
+  seata:
+    repository: seataio/seata-server
+    tag: 2.0.0
+    pullPolicy: IfNotPresent
   repository: nginx
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
@@ -34,6 +37,13 @@ image:
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
+
+seata:
+  nameOverride: "seata-server"
+  fullnameOverride: "seata-server"
+  service:
+    type: ClusterIP
+    port: 8091
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -117,3 +127,8 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+env:
+  seataPort: "8091"
+  storeMode: "file"
+  serverNode: "1"
