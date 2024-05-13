@@ -19,7 +19,7 @@ spec:
         tier: app
     spec:
       containers:
-        - image: hinsteny.com/seata-test/seata-stock:1.0.0 # image from local registry
+        - image: hinsteny.com/seata-test/seata-stock:latest # image from local registry
           name: seata-stock
           ports:
             - name: tcp

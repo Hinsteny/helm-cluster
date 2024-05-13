@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: "{{ include "seata-AT.fullname" . }}-test-connection"
+  name: "{{ include "seata-at.fullname" . }}-test-connection"
   labels:
-    {{- include "seata-AT.labels" . | nindent 4 }}
+    {{- include "seata-at.labels" . | nindent 4 }}
   annotations:
     "helm.sh/hook": test
 spec:
@@ -11,5 +11,5 @@ spec:
     - name: wget
       image: busybox
       command: ['wget']
-      args: ['{{ include "seata-AT.fullname" . }}:{{ .Values.service.port }}']
+      args: ['{{ include "seata-at.fullname" . }}:{{ .Values.service.port }}']
   restartPolicy: Never

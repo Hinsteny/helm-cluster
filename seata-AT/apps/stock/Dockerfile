@@ -7,6 +7,7 @@ WORKDIR /app
 EXPOSE 20883/tcp
 
 ENV seata.address=seata-server
+ENV registry.address=zookeeper://zookeeper-service:2181
 ENV mysql.address=stock-mysql-db-service
 
 # 复制应用压缩文件

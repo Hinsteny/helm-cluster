@@ -4,6 +4,8 @@ metadata:
   name: seata-business
   labels:
     app.kubernetes.io/name: seata-business
+    app.kubernetes.io/instance: seata-business
+    app: seata-business
 spec:
   selector: # mysql Pod Should contain same labels
     matchLabels:
@@ -19,7 +21,7 @@ spec:
         tier: app
     spec:
       containers:
-        - image: hinsteny.com/seata-test/seata-business:1.0.0 # image from local registry
+        - image: hinsteny.com/seata-test/seata-business:latest # image from local registry
           name: seata-business
           ports:
             - name: http

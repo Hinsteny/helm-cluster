@@ -2,16 +2,49 @@ apiVersion: v1
 kind: Service
 metadata:
   namespace: {{ .Release.Namespace | quote }}
+  name: zookeeper-service
+spec:
+  type: {{ .Values.seata.service.type }}
+  ports:
+    - name: http
+      protocol: TCP
+      port: 2181
+      targetPort: 2181
+  selector:
+    app.kubernetes.io/name: zookeeper
+    app.kubernetes.io/instance: zookeeper
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: {{ .Release.Namespace | quote }}
   name: {{ include "seata-server.fullname" . }}
   labels:
 {{ include "seata-server.labels" . | indent 4 }}
 spec:
   type: {{ .Values.seata.service.type }}
   ports:
-    - port: {{ .Values.seata.service.port }}
-      targetPort: http
+    - name: http
       protocol: TCP
-      name: http
+      port: {{ .Values.seata.service.port }}
+      targetPort: {{ .Values.seata.service.port }}
   selector:
     app.kubernetes.io/name: {{ include "seata-server.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/instance: {{ include "seata-server.name" . }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: {{ .Release.Namespace | quote }}
+  name: {{ include "seata-at.fullname" . }}-service
+  labels:
+{{ include "seata-at.labels" . | indent 4 }}
+spec:
+  type: {{ .Values.seata.service.type }}
+  ports:
+    - name: http
+      protocol: TCP
+      port: 9999
+      targetPort: 9999
+  selector:
+    app: seata-business
